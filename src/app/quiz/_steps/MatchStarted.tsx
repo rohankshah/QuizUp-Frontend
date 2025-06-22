@@ -43,13 +43,16 @@ const MatchStarted: React.FC<MatchStartedProps> = ({
     string[]
   > | null>(null);
 
+  const [correctOption, setCorrectOption] = useState<string | null>(null);
+
+  console.log("correctOption", correctOption);
+
   const handleReceiveQuestion = (data: QuestionData) => {
-    console.log("receive");
-    console.log("data", data);
     setIsCorrect(false);
     setIsIncorrect(false);
     setQuestionData(data);
     setSelectedOption(null);
+    setCorrectOption(null);
   };
 
   function handleAnswerResultEvent(data: AnswerResultEvent) {
@@ -58,6 +61,7 @@ const MatchStarted: React.FC<MatchStartedProps> = ({
     } else {
       setIsIncorrect(true);
     }
+    setCorrectOption(data.correctAnswer);
     setPlayersBySelectedOption(data.playersBySelectedOption);
   }
 
@@ -92,39 +96,49 @@ const MatchStarted: React.FC<MatchStartedProps> = ({
             {questionData.question}
           </h2>
           <div className="space-y-3">
-            {questionData.options.map((option, index) => (
-              <div key={index} className="relative">
-                <button
-                  onClick={() => handleOptionClick(option)}
-                  className={`w-full px-4 py-3 text-left rounded-xl transition duration-200 ${
-                    selectedOption === option
-                      ? !isCorrect && !isIncorrect
-                        ? "bg-blue-200"
-                        : isCorrect
-                        ? "bg-green-200"
-                        : "bg-red-200"
-                      : "bg-gray-100 hover:bg-blue-100"
-                  }`}
-                >
-                  {option}
-                </button>
-                {playersBySelectedOption?.[option] &&
-                  playersBySelectedOption[option].length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {playersBySelectedOption[option].map(
-                        (player, playerIndex) => (
-                          <span
-                            key={playerIndex}
-                            className="text-xs bg-gray-200 px-2 py-1 rounded-full text-gray-700"
-                          >
-                            {player}
-                          </span>
-                        )
-                      )}
-                    </div>
-                  )}
-              </div>
-            ))}
+            {questionData.options.map((option, index) => {
+              const isSelected = selectedOption === option;
+              const isCorrectAnswer = correctOption === option;
+              const isUserCorrect = isSelected && isCorrect;
+              const isUserWrong = isSelected && isIncorrect;
+
+              let bgClass = "bg-gray-100 hover:bg-blue-100";
+
+              if (isUserCorrect) {
+                bgClass = "bg-green-200";
+              } else if (isUserWrong) {
+                bgClass = "bg-red-200";
+              } else if (isSelected) {
+                bgClass = "bg-blue-200"; // selected but not yet graded
+              } else if (isCorrectAnswer) {
+                bgClass = "bg-green-200"; // correct answer revealed
+              }
+              return (
+                <div key={index} className="relative">
+                  <button
+                    onClick={() => handleOptionClick(option)}
+                    className={`w-full px-4 py-3 text-left rounded-xl transition duration-200 ${bgClass}`}
+                  >
+                    {option}
+                  </button>
+                  {playersBySelectedOption?.[option] &&
+                    playersBySelectedOption[option].length > 0 && (
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {playersBySelectedOption[option].map(
+                          (player, playerIndex) => (
+                            <span
+                              key={playerIndex}
+                              className="text-xs bg-gray-200 px-2 py-1 rounded-full text-gray-700"
+                            >
+                              {player}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    )}
+                </div>
+              );
+            })}
           </div>
         </>
       ) : (

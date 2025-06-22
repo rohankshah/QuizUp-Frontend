@@ -31,7 +31,7 @@ const Initial: React.FC<InitialProps> = ({
   setRoomId,
 }) => {
   const [socket] = useAtom(socketAtom);
-  const [joinRoomId, setJoinRoomId] = useState<string>();
+  const [joinRoomId, setJoinRoomId] = useState<string>("");
 
   // function handleStartGame() {
   //   if (socket && socket.connected) {

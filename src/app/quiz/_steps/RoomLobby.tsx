@@ -33,6 +33,7 @@ interface RoomDetails {
   hostId: string;
   players: PlayerDetails[];
   createdAt: string;
+  categoryId: string;
 }
 
 interface RoomLobbyProps {
@@ -80,6 +81,12 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({
     setCurrentStep(GameLogicSteps.MATCH_STARTED);
   }, []);
 
+  function handleCategoryChange(data: any) {
+    if (data.roomId !== roomId) return;
+
+    setSelectedCategoryId(data.categoryId);
+  }
+
   useEffect(() => {
     if (!socket || currentStep !== GameLogicSteps.LOBBY) return;
 
@@ -95,17 +102,20 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({
           (player) => player.id === roomDetails.hostId
         );
         setHostPlayer(hostObj);
+        setSelectedCategoryId(roomDetails?.categoryId);
       }
     );
 
     socket.on(SocketEvents.PLAYER_JOINED, handleNewPlayerJoin);
     socket.on(SocketEvents.PLAYER_LEFT, handlePlayerLeft);
     socket.on(SocketEvents.ROOM_QUIZ_STARTED, handleQuizStart);
+    socket.on(SocketEvents.CATEGORY_CHANGE, handleCategoryChange);
 
     return () => {
       socket.off(SocketEvents.PLAYER_JOINED, handleNewPlayerJoin);
       socket.on(SocketEvents.PLAYER_LEFT, handlePlayerLeft);
       socket.off(SocketEvents.ROOM_QUIZ_STARTED, handleQuizStart);
+      socket.off(SocketEvents.CATEGORY_CHANGE, handleCategoryChange);
     };
   }, [socket, currentStep]);
 
@@ -118,13 +128,10 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({
   function handleStartGame() {
     if (socket && selectedCategoryId) {
       socket.emit(SocketEvents.ROOM_START_QUIZ, {
-        roomId: roomId,
-        categoryId: parseInt(selectedCategoryId),
+        roomId,
       });
     }
   }
-
-  console.log(hostPlayer?.id);
 
   return (
     <div className="flex flex-col h-[80dvh] max-w-6xl w-full mx-auto space-y-8">
@@ -252,6 +259,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({
       <div className="flex items-center justify-center w-full">
         <Select
           // value={watch("venueUuid") || ""}
+          value={selectedCategoryId ? selectedCategoryId : ""}
           onValueChange={(value) => {
             setSelectedCategoryId(value);
             socket?.emit(SocketEvents.CATEGORY_CHANGE, {
