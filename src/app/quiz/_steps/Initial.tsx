@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../../../components/ui/dialog";
+import { PlusIcon, Users } from "lucide-react";
 
 interface InitialProps {
   currentStep: number;
@@ -33,17 +34,9 @@ const Initial: React.FC<InitialProps> = ({
   const [socket] = useAtom(socketAtom);
   const [joinRoomId, setJoinRoomId] = useState<string>("");
 
-  // function handleStartGame() {
-  //   if (socket && socket.connected) {
-  //     socket.emit(SocketEvents.JOIN_QUEUE);
-  //     setCurrentStep(GameLogicSteps.MATCHING);
-  //   }
-  // }
-
   function handleCreateRoom() {
     if (socket && socket.connected) {
       socket.emit(SocketEvents.CREATE_ROOM);
-      // setCurrentStep(GameLogicSteps.MATCHING);
     }
   }
 
@@ -71,36 +64,55 @@ const Initial: React.FC<InitialProps> = ({
 
   return (
     <>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Join Room</Button>
+            <Button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg cursor-pointer">
+              <PlusIcon />
+              Join Room
+            </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Join Room</DialogTitle>
+          <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-sm border border-gray-200 rounded-3xl shadow-2xl">
+            <DialogHeader className="text-center space-y-3 pb-2">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl mx-auto mb-2">
+                <Users className="text-white" />
+              </div>
+              <DialogTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Join Room
+              </DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="room" className="text-right">
+            <div className="space-y-4 py-4">
+              <div className="space-y-3">
+                <Label htmlFor="room" className="text-gray-700 font-semibold">
                   Room Code
                 </Label>
                 <Input
                   id="room"
                   value={joinRoomId}
                   onChange={(e) => setJoinRoomId(e.target.value)}
-                  placeholder="Enter room code"
-                  className="col-span-3"
+                  placeholder="c24ce31c-3664-4008-a1da-587fc7cdb730"
+                  className="h-12 px-4 rounded-xl border-2 border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 bg-white/50 backdrop-blur-sm text-center font-mono text-lg tracking-wider uppercase"
                 />
               </div>
             </div>
-            <DialogFooter>
-              <Button onClick={handleJoinRoom}>Join</Button>
+            <DialogFooter className="pt-2">
+              <Button
+                onClick={handleJoinRoom}
+                className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg"
+              >
+                Join Room
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <Button onClick={handleCreateRoom}>Create Room</Button>
-        {/* <Button onClick={handleStartGame}>Start</Button> */}
+
+        <Button
+          onClick={handleCreateRoom}
+          className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 cursor-pointer"
+        >
+          <PlusIcon />
+          Create Room
+        </Button>
       </div>
     </>
   );

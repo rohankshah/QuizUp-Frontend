@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 import Cookies from "js-cookie";
 import { useAtom, useSetAtom } from "jotai";
@@ -12,7 +11,6 @@ import { getCookieValue, isJwtExpired } from "../../utils/utils";
 import { jwtDecode } from "jwt-decode";
 
 const Navbar = () => {
-  const router = useRouter();
 
   const [user] = useAtom(userAtom);
   const setUser = useSetAtom(userAtom);
@@ -46,7 +44,7 @@ const Navbar = () => {
             Home
           </Link>
           {!user ? (
-            <Link onClick={() => console.log('click')} href="/login" className="hover:text-gray-200 cursor-pointer">
+            <Link href="/login" className="hover:text-gray-200 cursor-pointer">
               Login
             </Link>
           ) : (
