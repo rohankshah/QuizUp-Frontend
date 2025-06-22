@@ -15,7 +15,7 @@ The entire stack includes:
 - **Node.js** – for the backend server
 - **Redis** – for session and game state management
 - **MongoDB** – for storing player data
-- **Docker** – for redis and mongodb images
+- **Docker** – for containerizing Redis and MongoDB
 
 ## 📦 Getting Started
 
