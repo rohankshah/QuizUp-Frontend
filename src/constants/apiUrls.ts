@@ -3,6 +3,7 @@ export const apiUrls = {
   getPosts: "/api/posts",
   getPost: (id: string) => `/api/auth/${id}`,
   login: "/api/auth/login",
+  register: "/api/auth/register",
   getProfile: "/api/auth/profile",
 
   quiz_categories: "/api/game/categories",

@@ -2,71 +2,44 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { connectSocket } from "../../utils/socketConnect";
-import { socketAtom, userAtom } from "../../atoms/atom";
-import { useRouter } from "next/navigation";
-import { LoginPayload, useLoginUser } from "../../api/auth";
-
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+import { LoginPayload, useSignupUser } from "../../api/auth";
 import LoginSignupLayout from "../../layouts/LoginSignupLayout";
 import { toast } from "sonner";
 
 export default function SignupForm() {
-  const router = useRouter();
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const setSocket = useSetAtom(socketAtom);
-  const setUser = useSetAtom(userAtom);
-
-  const { mutateAsync: loginUser } = useMutation({
-    mutationFn: (data: LoginPayload) => useLoginUser(data),
+  const { mutateAsync: singupUser } = useMutation({
+    mutationFn: (data: LoginPayload) => useSignupUser(data),
   });
 
-  async function handleLogin() {
+  async function handleSignup() {
     setIsLoading(true);
     try {
-      const data = await loginUser({
+      await singupUser({
         username: username.trim(),
         password: password.trim(),
       });
-      const token = data.token;
-
-      if (!token) throw new Error("No token received");
-
-      Cookies.set("token", token, {
-        path: "/",
-        secure: true,
-        sameSite: "strict",
-        expires: 1 / 24,
-      });
-
-      const user = jwtDecode(token);
-      setUser(user);
-
-      const socket = connectSocket(token);
-      setSocket(socket);
-
-      router.push("/quiz");
-      toast("Logging in...");
+      toast("Sign Up successful");
     } catch (error) {
-      console.log(error);
       toast("Error");
+    } finally {
+      setUsername("");
+      setPassword("");
+      setIsLoading(false);
     }
   }
 
   return (
     <LoginSignupLayout
-      heading="Welcome Back"
-      subHeading="Login to start your quiz journey"
+      heading="Sign Up"
+      subHeading="Sign Up to start your quiz journey"
     >
       <div className="space-y-5">
         <div className="w-full flex flex-col gap-3">
@@ -95,7 +68,7 @@ export default function SignupForm() {
         </div>
         <Button
           className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={handleLogin}
+          onClick={handleSignup}
           disabled={isLoading}
         >
           {isLoading ? (
@@ -104,7 +77,7 @@ export default function SignupForm() {
               <span>Signing in...</span>
             </div>
           ) : (
-            "Login"
+            "Sign Up"
           )}
         </Button>
       </div>

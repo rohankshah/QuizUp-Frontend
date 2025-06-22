@@ -11,6 +11,11 @@ export const useLoginUser = async (data: LoginPayload) => {
   return response.data;
 };
 
+export const useSignupUser = async (data: LoginPayload) => {
+  const response = await apiClient.post(apiUrls.register, data);
+  return response.data;
+};
+
 export const useGetProfile = async () => {
   const response = await apiClientProtected.get(apiUrls.getProfile);
   return response.data;

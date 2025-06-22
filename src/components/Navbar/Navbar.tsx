@@ -11,7 +11,6 @@ import { getCookieValue, isJwtExpired } from "../../utils/utils";
 import { jwtDecode } from "jwt-decode";
 
 const Navbar = () => {
-
   const [user] = useAtom(userAtom);
   const setUser = useSetAtom(userAtom);
 
@@ -44,9 +43,20 @@ const Navbar = () => {
             Home
           </Link>
           {!user ? (
-            <Link href="/login" className="hover:text-gray-200 cursor-pointer">
-              Login
-            </Link>
+            <>
+              <Link
+                href="/login"
+                className="hover:text-gray-200 cursor-pointer"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="hover:text-gray-200 cursor-pointer"
+              >
+                Signup
+              </Link>
+            </>
           ) : (
             <button
               onClick={handleLogout}
