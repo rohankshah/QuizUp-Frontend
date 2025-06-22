@@ -1,4 +1,4 @@
-# QuizUp Clone Frontend (Clashmind)
+# QuizUp Clone Frontend
 
 This is the frontend of a simple, real-time multiplayer quiz game – inspired by **QuizUp** – built with **Next.js** and **Tailwind CSS**.
 
